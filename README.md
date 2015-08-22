@@ -1,4 +1,5 @@
 # spis15-project-RPi-Brendon-Kevin
+SPIS 2015 RPi project Brendon_Kevin
 
 ## Ideas:
 
