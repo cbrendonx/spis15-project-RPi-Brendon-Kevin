@@ -9,3 +9,5 @@ SPIS 2015 RPi project Brendon_Kevin
 4. Have the RPi collect objects, such as cups, in a walled area and move them to a base.
 5. Have the RPi locate, follow, and attack the other RPi robots.
 6. Make it fly.
+7. Remote control the RPi from a website.
+8. Have the RPi drive through a racetrack, using the light sensor, and stop when the sonar sensor senses a wall. It should start after it hears a loud noise like a clap.
