@@ -130,14 +130,14 @@ setLEDs(1, 1, 1, 1) # switch all LEDs off
 #       GPIO.cleanup()
 #       sys.exit()
 
-#forwards(slowspeed)
-#time.sleep(1)
+forwards(fastspeed)
+time.sleep(5)
 #turnright(slowspeed)
 #time.sleep(0.5)
 
 #square(slowspeed)
 
-circle(slowspeed)
+#circle(slowspeed)
 
 stopall()
 
