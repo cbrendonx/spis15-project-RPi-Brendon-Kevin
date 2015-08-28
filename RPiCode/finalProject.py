@@ -75,13 +75,13 @@ def backward(speed):
   print('backward')
 
 def turnRight():
-  rightForward(slowspeed)
-  leftForward(fastspeed)
+  rightForward(0)
+  leftForward(slowspeed)
   print('turn right')
 
 def turnLeft():
-  rightForward(fastspeed)
-  leftForward(slowspeed)
+  rightForward(slowspeed)
+  leftForward(0)
   print('turn left')
 
 def stopall():
@@ -93,7 +93,7 @@ def stopall():
 
 def followLine():
   if GPIO.input(11) == 0 and GPIO.input(12) == 1 and GPIO.input(13) == 0:
-    forward(fastspeed)
+    forward(slowspeed)
     setLEDs(0, 0)
   elif GPIO.input(11) == 1:
     turnRight()
