@@ -47,49 +47,40 @@ SONAR = 8
 def rightForward(speed):
   p.ChangeDutyCycle(speed)
   q.ChangeDutyCycle(0)
-  print('right forward')
 
 def leftForward(speed):
   a.ChangeDutyCycle(speed)
   b.ChangeDutyCycle(0)
-  print('left forward')
 
 def rightBackward(speed):
   p.ChangeDutyCycle(0)
   q.ChangeDutyCycle(speed)
-  print('right backward')
 
 def leftBackward(speed):
   a.ChangeDutyCycle(0)
   b.ChangeDutyCycle(speed)
-  print('left backward')
 
 def forward(speed):
   rightForward(speed)
   leftForward(speed)
-  print('forward')
 
 def backward(speed):
   rightBackward(speed)
   leftBackward(speed)
-  print('backward')
 
 def turnRight():
   rightForward(0)
-  leftForward(slowspeed)
-  print('turn right')
+  leftForward(slowspeed + 10)
 
 def turnLeft():
-  rightForward(slowspeed)
+  rightForward(slowspeed + 10)
   leftForward(0)
-  print('turn left')
 
 def stopall():
   p.ChangeDutyCycle(0)
   q.ChangeDutyCycle(0)
   a.ChangeDutyCycle(0)
   b.ChangeDutyCycle(0)
-  print('stop')
 
 def followLine():
   if GPIO.input(11) == 0 and GPIO.input(12) == 1 and GPIO.input(13) == 0:
