@@ -37,7 +37,6 @@ finished = False
 slowspeed = 20
 fastspeed = 100
 
-
 # Define pins for LEDs
 LED2 = 22
 LED3 = 18
@@ -124,13 +123,12 @@ def sonar():
     distance = elapsed * 34000
     # That was the distance there and back so halve the value
     distance = distance / 2
-    print 'Distance:', distance
     # checks if there is an obstacle within a certain distance
     if distance < 15:
       globalstop = 1
     else:
       globalstop = 0
-    time.sleep(0.5)
+    time.sleep(0.25)
 
 def turnAround():
   pointTurn()
@@ -138,7 +136,7 @@ def turnAround():
   while GPIO.input(11) != 0 and GPIO.input(12) != 1 and GPIO.input(13) != 0:
     pointTurn()
 
-threading.Timer(1, sonar).start()
+threading.Timer(20, sonar).start()
 
 def setLEDs(L2, L3):
   GPIO.output(LED2, L2)
@@ -151,7 +149,6 @@ try:
     followLine()
     if globalstop == 1:
       turnAround()
-    
 
 except KeyboardInterrupt:
   finished = True # stops other loops
