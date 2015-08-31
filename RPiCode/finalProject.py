@@ -1,6 +1,8 @@
+
 # Final RPi Project for SPIS 2015
  
 import RPi.GPIO as GPIO, time, sys, threading
+import random
 
 # use physical pin numbering
 GPIO.setmode(GPIO.BOARD)
@@ -78,15 +80,23 @@ def turnLeft():
   rightForward(slowspeed + 10)
   leftForward(0)
 
-def pointTurn():
- rightBackward(slowspeed)
- leftForward(slowspeed)
+def pointTurnRight():
+  rightBackward(slowspeed)
+  leftForward(slowspeed)
+
+def pointTurnLeft():
+  rightForward(slowspeed)
+  leftBackward(slowspeed)
 
 def stopall():
   p.ChangeDutyCycle(0)
   q.ChangeDutyCycle(0)
   a.ChangeDutyCycle(0)
   b.ChangeDutyCycle(0)
+
+def pause():
+  stopall()
+  time.sleep(1)
 
 def followLine():
   if globalstop == 1:
@@ -131,10 +141,37 @@ def sonar():
     time.sleep(0.25)
 
 def turnAround():
-  pointTurn()
-  time.sleep(0.1)
+  pointTurnRight()
+  time.sleep(1)
   while GPIO.input(11) != 0 and GPIO.input(12) != 1 and GPIO.input(13) != 0:
     pointTurn()
+
+def goAround():
+  pause()
+  pointTurnRight()
+  time.sleep(0.5)
+  pause()
+  forward(slowspeed)
+  time.sleep(1)
+  pause()
+  pointTurnLeft()
+  time.sleep(0.5)
+  pause()
+  forward(slowspeed)
+  time.sleep(1.5)
+  pause()
+  pointTurnLeft()
+  time.sleep(0.5)
+  pause()
+  while GPIO.input(12) != 1:
+    forward(slowspeed)
+  pause()
+  pointTurnRight()
+  time.sleep(0.5)
+
+def whack():
+  while True:
+    stopall()
 
 threading.Timer(1, sonar).start()
 
@@ -149,6 +186,7 @@ try:
     followLine()
     if globalstop == 1:
       turnAround()
+#      random.choice([turnAround, goAround, whack])()
 
 except KeyboardInterrupt:
   finished = True # stops other loops
