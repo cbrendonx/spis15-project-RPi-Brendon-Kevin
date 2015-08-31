@@ -1,6 +1,6 @@
 # Final RPi Project for SPIS 2015
-
-import RPi.GPIO as GPIO, time, sys
+ 
+import RPi.GPIO as GPIO, time, sys, threading
 
 # use physical pin numbering
 GPIO.setmode(GPIO.BOARD)
@@ -29,6 +29,9 @@ a.start(0)
 GPIO.setup(26, GPIO.OUT)
 b = GPIO.PWM(26,20)
 b.start(0)
+
+globalstop = 0
+finished = False
 
 # Define duty cycles as speed options
 slowspeed = 20
@@ -76,6 +79,10 @@ def turnLeft():
   rightForward(slowspeed + 10)
   leftForward(0)
 
+def pointTurn():
+ rightBackward(slowspeed)
+ leftForward(slowspeed)
+
 def stopall():
   p.ChangeDutyCycle(0)
   q.ChangeDutyCycle(0)
@@ -83,7 +90,9 @@ def stopall():
   b.ChangeDutyCycle(0)
 
 def followLine():
-  if GPIO.input(11) == 0 and GPIO.input(12) == 1 and GPIO.input(13) == 0:
+  if globalstop == 1:
+    stopall()
+  elif GPIO.input(11) == 0 and GPIO.input(12) == 1 and GPIO.input(13) == 0:
     forward(slowspeed)
     setLEDs(0, 0)
   elif GPIO.input(11) == 1:
@@ -94,27 +103,42 @@ def followLine():
     setLEDs(0, 1)
 
 def sonar():
-  GPIO.setup(SONAR, GPIO.OUT)
-  GPIO.output(SONAR, True)
-  time.sleep(0.00001)
-  GPIO.output(SONAR, False)
-  start = time.time()
-  count = time.time()
-  GPIO.setup(SONAR, GPIO.IN)
-  while GPIO.input(SONAR) == 0 and time.time() - count < 0.1:
+  while finished != True:
+    global globalstop
+    GPIO.setup(SONAR, GPIO.OUT)
+    GPIO.output(SONAR, True)
+    time.sleep(0.00001)
+    GPIO.output(SONAR, False)
     start = time.time()
-  stop = time.time()
-  while GPIO.input(SONAR) == 1:
+    count = time.time()
+    GPIO.setup(SONAR, GPIO.IN)
+    while GPIO.input(SONAR) == 0 and time.time() - count < 0.1:
+      start = time.time()
     stop = time.time()
-  # Calculate pulse length
-  elapsed = stop - start
-  # Distance pulse travelled in that time is time
-  # multiplied by the speed of sound (cm/s)
-  distance = elapsed * 34000
-  # That was the distance there and back so halve the value
-  distance = distance / 2
-  print 'Distance:', distance
-  time.sleep(1)
+    while GPIO.input(SONAR) == 1:
+      stop = time.time()
+    # Calculate pulse length
+    elapsed = stop - start
+    # Distance pulse travelled in that time is time
+    # multiplied by the speed of sound (cm/s)
+    distance = elapsed * 34000
+    # That was the distance there and back so halve the value
+    distance = distance / 2
+    print 'Distance:', distance
+    # checks if there is an obstacle within a certain distance
+    if distance < 15:
+      globalstop = 1
+    else:
+      globalstop = 0
+    time.sleep(0.5)
+
+def turnAround():
+  pointTurn()
+  time.sleep(0.1)
+  while GPIO.input(11) != 0 and GPIO.input(12) != 1 and GPIO.input(13) != 0:
+    pointTurn()
+
+threading.Timer(1, sonar).start()
 
 def setLEDs(L2, L3):
   GPIO.output(LED2, L2)
@@ -125,7 +149,13 @@ setLEDs(1, 1)
 try:
   while True:
     followLine()
+    if globalstop == 1:
+      turnAround()
+    
 
 except KeyboardInterrupt:
+  finished = True # stops other loops
   GPIO.cleanup()
   sys.exit()
+
+
