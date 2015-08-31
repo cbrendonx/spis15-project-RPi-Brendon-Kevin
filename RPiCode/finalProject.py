@@ -136,7 +136,7 @@ def turnAround():
   while GPIO.input(11) != 0 and GPIO.input(12) != 1 and GPIO.input(13) != 0:
     pointTurn()
 
-threading.Timer(20, sonar).start()
+threading.Timer(1, sonar).start()
 
 def setLEDs(L2, L3):
   GPIO.output(LED2, L2)
