@@ -1,4 +1,3 @@
-
 # Final RPi Project for SPIS 2015
  
 import RPi.GPIO as GPIO, time, sys, threading
@@ -147,31 +146,34 @@ def turnAround():
     pointTurn()
 
 def goAround():
+  turn = [0.6, 0.6, 0.5, 0.5]
+  turntime = 0.6
   pause()
   pointTurnRight()
-  time.sleep(0.5)
+  time.sleep(turn[0])
   pause()
   forward(slowspeed)
   time.sleep(1)
   pause()
   pointTurnLeft()
-  time.sleep(0.5)
+  time.sleep(turn[1])
   pause()
   forward(slowspeed)
   time.sleep(1.5)
   pause()
   pointTurnLeft()
-  time.sleep(0.5)
+  time.sleep(turn[2])
   pause()
   while GPIO.input(12) != 1:
     forward(slowspeed)
   pause()
   pointTurnRight()
-  time.sleep(0.5)
+  time.sleep(turn[3])
 
 def whack():
-  while True:
-    stopall()
+  print "WHACK!"
+  stopall()
+  time.sleep(1)
 
 threading.Timer(1, sonar).start()
 
@@ -185,8 +187,8 @@ try:
   while True:
     followLine()
     if globalstop == 1:
-      turnAround()
 #      random.choice([turnAround, goAround, whack])()
+      random.choice([turnAround, goAround])()
 
 except KeyboardInterrupt:
   finished = True # stops other loops
