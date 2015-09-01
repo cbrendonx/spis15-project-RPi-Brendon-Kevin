@@ -79,13 +79,13 @@ def turnLeft():
   rightForward(slowspeed + 10)
   leftForward(0)
 
-def pointTurnRight():
-  rightBackward(slowspeed)
-  leftForward(slowspeed)
+def pointTurnRight(speed = slowspeed):
+  rightBackward(speed)
+  leftForward(speed)
 
-def pointTurnLeft():
-  rightForward(slowspeed)
-  leftBackward(slowspeed)
+def pointTurnLeft(speed = slowspeed):
+  rightForward(speed)
+  leftBackward(speed)
 
 def stopall():
   p.ChangeDutyCycle(0)
@@ -141,13 +141,12 @@ def sonar():
 
 def turnAround():
   pointTurnRight()
-  time.sleep(1)
-  while GPIO.input(11) != 0 and GPIO.input(12) != 1 and GPIO.input(13) != 0:
-    pointTurn()
+  time.sleep(0.5)
+  while GPIO.input(12) != 1:
+    pointTurnRight()
 
 def goAround():
   turn = [0.6, 0.6, 0.5, 0.5]
-  turntime = 0.6
   pause()
   pointTurnRight()
   time.sleep(turn[0])
@@ -171,9 +170,15 @@ def goAround():
   time.sleep(turn[3])
 
 def whack():
-  print "WHACK!"
-  stopall()
+  pause()
+  forward(slowspeed)
+  time.sleep(0.5)
+  pause()
+  pointTurnRight(fastspeed)
   time.sleep(1)
+  pause()
+  while GPIO.input(12) != 1:
+    pointTurnRight()
 
 threading.Timer(1, sonar).start()
 
@@ -187,8 +192,7 @@ try:
   while True:
     followLine()
     if globalstop == 1:
-#      random.choice([turnAround, goAround, whack])()
-      random.choice([turnAround, goAround])()
+      random.choice([turnAround, goAround, whack])()
 
 except KeyboardInterrupt:
   finished = True # stops other loops
