@@ -87,6 +87,12 @@ def pointTurnLeft(speed = slowspeed):
   rightForward(speed)
   leftBackward(speed)
 
+def rotateLeft(speed):
+  p.ChangeDutyCycle(speed)
+  q.ChangeDutyCycle(0)
+  a.ChangeDutyCycle(0)
+  b.ChangeDutyCycle(0)
+
 def stopall():
   p.ChangeDutyCycle(0)
   q.ChangeDutyCycle(0)
@@ -180,6 +186,20 @@ def whack():
   while GPIO.input(12) != 1:
     pointTurnRight()
 
+def goAroundCircle():
+  turn = [0.7, 0.5]
+  pause()
+  pointTurnRight()
+  time.sleep(turn[0])
+  pause()
+  rightForward(20)
+  leftForward(10)
+  while GPIO.input(12) != 1:
+    pass
+  pause()
+  pointTurnRight()
+  time.sleep(turn[1])
+
 threading.Timer(1, sonar).start()
 
 def setLEDs(L2, L3):
@@ -192,7 +212,7 @@ try:
   while True:
     followLine()
     if globalstop == 1:
-      random.choice([turnAround, goAround, whack])()
+      random.choice([turnAround, goAroundCircle, whack])()
 
 except KeyboardInterrupt:
   finished = True # stops other loops
