@@ -3,6 +3,8 @@
 import RPi.GPIO as GPIO, time, sys, threading
 import random
 
+from Adafruit_LED_Backpack import BicolorMatrix8x8
+
 # use physical pin numbering
 GPIO.setmode(GPIO.BOARD)
 
@@ -46,6 +48,49 @@ GPIO.setup(LED3, GPIO.OUT)
 
 # Define Sonar pin for Trigger and Echo to be the same
 SONAR = 8
+
+smile = [[0,0,1,1,1,1,0,0],
+        [0,1,0,0,0,0,1,0],
+        [1,0,1,0,0,1,0,1],
+        [1,0,0,0,0,0,0,1],
+        [1,0,1,0,0,1,0,1],
+        [1,0,0,1,1,0,0,1],
+        [0,1,0,0,0,0,1,0],
+        [0,0,1,1,1,1,0,0]]
+
+frown = [[0,0,1,1,1,1,0,0],
+        [0,1,0,0,0,0,1,0],
+        [1,0,1,0,0,1,0,1],
+        [1,0,0,0,0,0,0,1],
+        [1,0,0,1,1,0,0,1],
+        [1,0,1,0,0,1,0,1],
+        [0,1,0,0,0,0,1,0],
+        [0,0,1,1,1,1,0,0]]
+
+dead  = [[0,0,1,1,1,1,0,0],
+        [0,1,0,0,0,0,1,0],
+        [1,0,0,0,0,0,0,1],
+        [1,1,1,0,0,1,1,1],
+        [1,0,0,0,0,0,0,1],
+        [1,0,1,1,1,1,0,1],
+        [0,1,0,0,0,0,1,0],
+        [0,0,1,1,1,1,0,0]]
+
+display = BicolorMatrix8x8.BicolorMatrix8x8()
+
+display.begin()
+
+def setMatrix(ls, c):
+  # Clear the display buffer
+  display.clear()
+  for x in range(8):
+    for y in range(8):
+      # Set pixel at position i, j to appropriate color
+      if ls[x][y] == 1:
+        display.set_pixel(x, y, c)
+      # Write the display buffer to the hardware
+      # This must be called to update the actual display LEDs.
+      display.write_display()
 
 def rightForward(speed):
   p.ChangeDutyCycle(speed)
@@ -176,7 +221,6 @@ def goAround():
   time.sleep(turn[3])
 
 def whack():
-  pause()
   forward(slowspeed)
   time.sleep(0.5)
   pause()
@@ -188,7 +232,6 @@ def whack():
 
 def goAroundCircle():
   turn = [0.7, 0.5]
-  pause()
   pointTurnRight()
   time.sleep(turn[0])
   pause()
@@ -208,13 +251,21 @@ def setLEDs(L2, L3):
 
 setLEDs(1, 1)
 
+setMatrix(smile, BicolorMatrix8x8.GREEN)
+
 try:
   while True:
     followLine()
     if globalstop == 1:
+      pause()
+      setMatrix(frown, BicolorMatrix8x8.RED)
       random.choice([turnAround, goAroundCircle, whack])()
+      stopall()
+      setMatrix(smile, BicolorMatrix8x8.GREEN)
 
 except KeyboardInterrupt:
+  stopall()
+  setMatrix(dead, BicolorMatrix8x8.YELLOW)
   finished = True # stops other loops
   GPIO.cleanup()
   sys.exit()
