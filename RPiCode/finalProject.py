@@ -239,9 +239,9 @@ def goAroundCircle():
   leftForward(10)
   while GPIO.input(12) != 1:
     pass
-  pause()
-  pointTurnRight()
-  time.sleep(turn[1])
+#  pause()
+#  pointTurnRight()
+#  time.sleep(turn[1])
 
 threading.Timer(1, sonar).start()
 
